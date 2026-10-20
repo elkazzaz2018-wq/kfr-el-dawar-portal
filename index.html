@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البوابة الإلكترونية - إدارة مركز كفر الدوار التعليمية</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Bar -->
+    <div class="bg-indigo-950 text-indigo-200 text-xs py-2 px-4 border-b border-indigo-900">
+        جمهورية مصر العربية | وزارة التربية والتعليم والتعليم الفني | مديرية التربية والتعليم بمحافظة البحيرة
+    </div>
+
+    <!-- Main Header -->
+    <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="bg-amber-400 text-indigo-950 p-3 rounded-xl font-bold text-2xl shadow">
+                    <i class="fa-solid fa-landmark"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-xl leading-tight">إدارة مركز كفر الدوار التعليمية</h1>
+                    <p class="text-xs text-indigo-200 mt-0.5">البوابة الرقمية الرسمية للخدمات والمتابعة التعليمية</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-6 space-x-reverse text-sm font-semibold">
+                <a href="#home" class="text-amber-400 hover:text-white transition">الرئيسية</a>
+                <a href="#news" class="hover:text-amber-400 transition">الكتب الدورية والأخبار</a>
+                <a href="#services" class="hover:text-amber-400 transition">الخدمات الإلكترونية</a>
+                <a href="#schools" class="hover:text-amber-400 transition">دليل المدارس</a>
+                <a href="#contact" class="hover:text-amber-400 transition">اتصل بنا</a>
+            </nav>
+
+            <!-- Login / Admin Dashboard Button -->
+            <div>
+                <a href="dashboard.html" class="bg-amber-400 hover:bg-amber-50 text-indigo-950 text-xs font-bold px-4 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-shield"></i> بوابة القيادة والإدارة
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner Section -->
+    <section class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-blue-900 text-white py-12 px-4 shadow-inner">
+        <div class="max-w-7xl mx-auto text-center space-y-4">
+            <span class="bg-indigo-800 text-amber-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-700">بوابة خدمات المواطنين والمعلمين</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">مرحباً بكم في البوابة الرقمية لمركز كفر الدوار</h2>
+            <p class="text-indigo-200 text-sm max-w-2xl mx-auto">منصة متكاملة لتسهيل الخدمات التعليمية، متابعة الانضباط المدرسي، واستعراض أحدث القرارات والكتب الدورية بقطاعات الإدارة.</p>
+            
+            <!-- Quick Search Bar -->
+            <div class="max-w-xl mx-auto mt-6 flex bg-white rounded-xl shadow-lg p-2 border border-slate-200">
+                <input type="text" placeholder="ابحث عن قرار، مدرسة، أو خدمة إلكترونية..." class="flex-1 px-4 py-2 text-xs sm:text-sm text-slate-750 focus:outline-none">
+                <button class="bg-indigo-800 hover:bg-indigo-900 text-white px-5 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-1">
+                    <i class="fa-solid fa-magnifying-glass"></i> بحث
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
+
+        <!-- Quick Services Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 -mt-12 relative z-10">
+            <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition">
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-file-pen"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 text-sm">شؤون العاملين والمعلمين</h3>
+                <p class="text-xs text-slate-500 mt-1">طلبات التنديب، النقل، ومتابعة الترقيات إلكترونياً.</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition">
+                <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-school-flag"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 text-sm">دليل مدارس الإدارة</h3>
+                <p class="text-xs text-slate-500 mt-1">استعراض كافة مدارس مركز كفر الدوار ابتدائي وإعدادي وثانوي.</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition">
+                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 text-sm">الكتب الدورية والقرارات</h3>
+                <p class="text-xs text-slate-500 mt-1">تحميل أحدث النشرات والكتب الواردة من الوزارة والمديرية.</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition">
+                <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 text-sm">منصة الشكاوى والمقترحات</h3>
+                <p class="text-xs text-slate-500 mt-1">تواصل مباشر وسريع مع إدارة خدمة المواطنين ومكتب المدير العام.</p>
+            </div>
+        </div>
+
+        <!-- News and Announcements Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Latest News (2 columns) -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-newspaper text-indigo-600"></i> أحدث أخبار وفعاليات إدارة كفر الدوار
+                    </h3>
+                    <span class="text-xs text-indigo-600 font-bold cursor-pointer hover:underline">عرض الكل</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex gap-4 items-start border-b border-slate-100 pb-4">
+                        <div class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-2 rounded-lg text-center min-w-[70px]">
+                            20 <span class="block text-[10px] font-normal">أكتوبر</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm hover:text-indigo-600 cursor-pointer">مدير عام الإدارة يترأس اجتماعاً موسعاً لمديري المدارس لمتابعة الانضباط وسد العجز</h4>
+                            <p class="text-xs text-slate-500 mt-1">عُقد صباح اليوم اجتماع برئاسة قيادات الإدارة لمناقشة خطط سير العملية التعليمية بمدارس المركز...</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start border-b border-slate-100 pb-4">
+                        <div class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-2 rounded-lg text-center min-w-[70px]">
+                            18 <span class="block text-[10px] font-normal">أكتوبر</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm hover:text-indigo-600 cursor-pointer">إطلاق منظومة المتابعة الرقمية الميدانية لمدارس الإدارة</h4>
+                            <p class="text-xs text-slate-500 mt-1">بدء تفعيل نظام التقارير الإلكترونية لمديري المراحل والموجهين للوقوف على الحالة اليومية للمدارس...</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start">
+                        <div class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-2 rounded-lg text-center min-w-[70px]">
+                            15 <span class="block text-[10px] font-normal">أكتوبر</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm hover:text-indigo-600 cursor-pointer">فتح باب التقديم لمسابقة المعلم المثالي على مستوى الإدارة</h4>
+                            <p class="text-xs text-slate-500 mt-1">أعلنت قسم التنسيق بالإدارة عن الشروط والأحكام الخاصة بالتقدم لمسابقة المعلمين المتميزين هذا العام...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Links & Bulletins -->
+            <div class="space-y-6">
+                <!-- Circulars / Books -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <h3 class="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-red-600"></i> الكتب الدورية والتعميمات الهامة
+                    </h3>
+                    <ul class="space-y-3 text-xs">
+                        <li class="flex justify-between items-center bg-slate-50 p-2.5 rounded border border-slate-100 hover:bg-slate-100 transition">
+                            <span class="font-semibold text-slate-700">الكتاب الدوري رقم (14) بشأن تنظيم أعمال الامتحانات</span>
+                            <a href="#" class="text-indigo-600 font-bold flex items-center gap-1"><i class="fa-solid fa-download"></i> تحميل</a>
+                        </li>
+                        <li class="flex justify-between items-center bg-slate-50 p-2.5 rounded border border-slate-100 hover:bg-slate-100 transition">
+                            <span class="font-semibold text-slate-700">تعليمات الأمن والسلامة المهنية بالمدارس</span>
+                            <a href="#" class="text-indigo-600 font-bold flex items-center gap-1"><i class="fa-solid fa-download"></i> تحميل</a>
+                        </li>
+                        <li class="flex justify-between items-center bg-slate-50 p-2.5 rounded border border-slate-100 hover:bg-slate-100 transition">
+                            <span class="font-semibold text-slate-700">جداول خطة الزيارات الميدانية للموجهين</span>
+                            <a href="#" class="text-indigo-600 font-bold flex items-center gap-1"><i class="fa-solid fa-download"></i> تحميل</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Emergency Contact Card -->
+                <div class="bg-indigo-900 text-white rounded-xl shadow-sm p-5 text-center space-y-2">
+                    <div class="w-10 h-10 bg-amber-400 text-indigo-950 rounded-full flex items-center justify-center text-lg mx-auto mb-2">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3 class="font-bold text-sm">غرفة عمليات الإدارة التعليمية</h3>
+                    <p class="text-xs text-indigo-200">متاحة طوال ساعات العمل الرسمية لتلقي البلاغات والطارئة.</p>
+                    <span class="inline-block bg-indigo-800 text-amber-300 font-bold text-xs px-3 py-1 rounded-full mt-2">خط ساخن / طوارئ</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-right">
+            <div>
+                <p class="font-bold text-white text-sm">إدارة مركز كفر الدوار التعليمية - محافظة البحيرة</p>
+                <p class="mt-1 text-slate-500">جميع الحقوق محفوظة © البوابة الرقمية 2026</p>
+            </div>
+            <div>
+                <p class="text-slate-400">تصميم وتطوير: <b class="text-amber-400">مكتب القزاز للبرمجيات</b></p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
