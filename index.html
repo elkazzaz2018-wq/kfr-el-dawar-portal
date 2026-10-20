@@ -3,372 +3,1048 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البوابة والمنظومة الرقمية الشاملة - إدارة مركز كفر الدوار التعليمية</title>
-    <!-- Tailwind CSS -->
+    <title>البوابة الرقمية والمنظومة الشاملة - إدارة مركز كفر الدوار التعليمية</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        .edit-highlight {
+            outline: 2px dashed #f59e0b;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Top Info Bar -->
-    <div class="bg-indigo-950 text-indigo-200 text-xs py-2 px-4 border-b border-indigo-950 flex justify-between items-center">
-        <span>جمهورية مصر العربية | وزارة التربية والتعليم | مديرية التربية والتعليم بالبحيرة - إدارة مركز كفر الدوار</span>
-        <span id="currentTime" class="font-bold text-amber-400">التاريخ: 20 أكتوبر 2026</span>
+    <!-- Top Admin & Edit Mode Control Bar -->
+    <div class="bg-slate-900 text-slate-200 text-xs py-2 px-4 flex flex-wrap justify-between items-center border-b border-slate-800 sticky top-0 z-50">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <span class="bg-amber-500 text-slate-950 font-bold px-2 py-0.5 rounded text-[10px]">المنظومة الرقمية الرسمية</span>
+            <span class="hidden sm:inline">إدارة مركز كفر الدوار التعليمية - مديرية التربية والتعليم بالبحيرة</span>
+        </div>
+        <div class="flex items-center space-x-3 space-x-reverse mt-1 sm:mt-0">
+            <!-- Edit Mode Toggle Switch -->
+            <div class="flex items-center bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                <span class="ml-2 font-bold text-[11px]" id="editModeLabel">وضع التصفح</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="editModeToggle" onchange="toggleEditMode()" class="sr-only peer">
+                    <div class="w-9 h-5 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                </label>
+            </div>
+            <!-- Reset Button -->
+            <button onclick="resetSystemData()" class="bg-red-600/80 hover:bg-red-600 text-white px-2.5 py-1 rounded text-[11px] font-bold transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-right"></i> إعادة ضبط البيانات
+            </button>
+        </div>
     </div>
 
     <!-- Main Navigation Header -->
-    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+    <header class="bg-indigo-900 text-white shadow-lg sticky top-[37px] z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="bg-amber-400 text-indigo-950 p-2.5 rounded-xl font-bold text-xl shadow">
+                <div class="bg-amber-400 text-indigo-950 p-2.5 rounded-xl font-bold text-2xl shadow-md">
                     <i class="fa-solid fa-landmark"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-base leading-tight">إدارة مركز كفر الدوار التعليمية</h1>
-                    <p class="text-[10px] text-indigo-200">المنظومة الرقمية والبوابة الإلكترونية الشاملة</p>
+                    <h1 class="font-black text-lg leading-tight">إدارة مركز كفر الدوار التعليمية</h1>
+                    <p class="text-xs text-indigo-200">بوابة الخدمات والقيادة والمتابعة الميدانية الرقمية</p>
                 </div>
             </div>
 
             <!-- Navigation Tabs Switching -->
-            <nav class="flex items-center space-x-1 sm:space-x-2 space-x-reverse text-xs font-bold mt-2 sm:mt-0">
-                <button onclick="switchTab('public-portal')" id="btn-public-portal" class="px-3 py-2 rounded-lg bg-indigo-800 text-amber-300 transition shadow-sm">
-                    <i class="fa-solid fa-globe ml-1"></i> البوابة العامة
+            <nav class="flex flex-wrap items-center gap-1 sm:gap-2 text-xs font-bold">
+                <button onclick="switchTab('public-portal')" id="btn-public-portal" class="px-3 py-2 rounded-lg bg-amber-400 text-indigo-950 shadow transition flex items-center gap-1">
+                    <i class="fa-solid fa-globe"></i> <span>البوابة العامة</span>
                 </button>
-                <button onclick="switchTab('general-dashboard')" id="btn-general-dashboard" class="px-3 py-2 rounded-lg hover:bg-indigo-800 transition">
-                    <i class="fa-solid fa-chart-pie ml-1"></i> لوحة المدير العام
+                <button onclick="switchTab('general-dashboard')" id="btn-general-dashboard" class="px-3 py-2 rounded-lg hover:bg-indigo-800 transition flex items-center gap-1">
+                    <i class="fa-solid fa-chart-pie"></i> <span>لوحة المدير العام</span>
                 </button>
-                <button onclick="switchTab('stage-dashboard')" id="btn-stage-dashboard" class="px-3 py-2 rounded-lg hover:bg-indigo-800 transition">
-                    <i class="fa-solid fa-layer-group ml-1"></i> مديري المراحل
+                <button onclick="switchTab('stage-dashboard')" id="btn-stage-dashboard" class="px-3 py-2 rounded-lg hover:bg-indigo-800 transition flex items-center gap-1">
+                    <i class="fa-solid fa-layer-group"></i> <span>مديري المراحل</span>
                 </button>
-                <button onclick="switchTab('school-portal')" id="btn-school-portal" class="px-3 py-2 rounded-lg hover:bg-indigo-800 transition">
-                    <i class="fa-solid fa-school ml-1"></i> بوابة مديري المدارس
+                <button onclick="switchTab('school-portal')" id="btn-school-portal" class="px-3 py-2 rounded-lg hover:bg-indigo-800 transition flex items-center gap-1">
+                    <i class="fa-solid fa-school"></i> <span>بوابة مديري المدارس</span>
                 </button>
             </nav>
         </div>
     </header>
 
-    <!-- Main Dynamic Container -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
+    <!-- Global Notice Bar (Editable) -->
+    <div id="noticeBanner" class="bg-amber-500 text-indigo-950 px-4 py-2 font-bold text-xs shadow-inner flex justify-between items-center">
+        <div class="flex items-center gap-2 max-w-5xl overflow-hidden">
+            <span class="bg-indigo-950 text-white px-2 py-0.5 rounded text-[10px] shrink-0">تنبيه عاجل</span>
+            <marquee id="noticeMarquee" class="text-xs font-bold">تنبيه هام من مدير عام الإدارة: التنبيه على جميع المدارس بضرورة إنهاء تسجيل بيانات الانضباط اليومي قبل الساعة 10 صباحاً.</marquee>
+        </div>
+        <button onclick="editGlobalNotice()" class="edit-btn hidden bg-indigo-950 text-white px-2 py-1 rounded text-[10px] shrink-0 hover:bg-indigo-900">
+            <i class="fa-solid fa-pen"></i> تعديل التنبيه
+        </button>
+    </div>
 
-        <!-- ================= 1. PUBLIC PORTAL ================= -->
+    <!-- Main Dynamic Body Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+        <!-- ========================================================================= -->
+        <!-- 1. PUBLIC PORTAL (البوابة العامة) -->
+        <!-- ========================================================================= -->
         <div id="public-portal" class="tab-content active space-y-6">
             <!-- Hero Banner -->
-            <div class="bg-gradient-to-r from-indigo-900 to-blue-900 text-white p-8 rounded-2xl shadow-md text-center space-y-3">
-                <span class="bg-indigo-800 text-amber-300 text-xs px-3 py-1 rounded-full font-bold">بوابة الخدمات الرسمية</span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold">مرحباً بكم في البوابة الرقمية لمركز كفر الدوار</h2>
-                <p class="text-xs sm:text-sm text-indigo-200 max-w-xl mx-auto">منصة إلكترونية متكاملة لخدمة المعلمين، أولياء الأمور، ومتابعة العملية التعليمية بكل مدارس المركز.</p>
-            </div>
-
-            <!-- Quick Services Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-file-lines"></i></div>
-                    <h3 class="font-bold text-xs text-slate-800">شؤون المعلمين والتنديب</h3>
-                    <p class="text-[11px] text-slate-500 mt-1">الاستعلام عن طلبات النقل والتسكين الداخلي.</p>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-school-flag"></i></div>
-                    <h3 class="font-bold text-xs text-slate-800">دليل المدارس (48 مدرسة)</h3>
-                    <p class="text-[11px] text-slate-500 mt-1">استعراض بيانات مدارس ابتدائي، إعدادي وثانوي.</p>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-bullhorn"></i></div>
-                    <h3 class="font-bold text-xs text-slate-800">الكتب الدورية والتعميمات</h3>
-                    <p class="text-[11px] text-slate-500 mt-1">تحميل القرارات الوزارية والنشرات الإدارية الرسمية.</p>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-headset"></i></div>
-                    <h3 class="font-bold text-xs text-slate-800">خدمة المواطنين والشكاوى</h3>
-                    <p class="text-[11px] text-slate-500 mt-1">تقديم واستعلام الطلبات الموجهة لمكتب المدير العام.</p>
+            <div class="bg-gradient-to-r from-indigo-950 via-indigo-900 to-blue-900 text-white p-6 sm:p-8 rounded-2xl shadow-lg relative overflow-hidden">
+                <div class="relative z-10 space-y-3 max-w-2xl">
+                    <span class="bg-indigo-800/80 text-amber-300 text-xs px-3 py-1 rounded-full font-bold border border-indigo-700">البوابة الرسمية لخدمات المواطنين والمعلمين</span>
+                    <h2 class="text-2xl sm:text-4xl font-black tracking-tight leading-snug">أهلاً بكم في البوابة الرقمية لمركز كفر الدوار التعليمي</h2>
+                    <p class="text-xs sm:text-sm text-indigo-200">المنصة الموحدة لنشر القرارات والكتب الدورية، متابعة فعاليات المدارس، وتسهيل التواصل بين القيادة التعليمية والميدان.</p>
                 </div>
             </div>
 
-            <!-- News & Circulars Feed -->
+            <!-- News & Announcements Grid Header with Admin Add Button -->
+            <div class="flex justify-between items-center">
+                <h3 class="font-extrabold text-base text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-newspaper text-indigo-600"></i> الأخبار والأحداث الجارية
+                </h3>
+                <button onclick="openAddNewsModal()" class="edit-btn hidden bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> إضافة خبر جديد
+                </button>
+            </div>
+
+            <!-- News List Grid -->
+            <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- News cards inserted by JS -->
+            </div>
+
+            <!-- Circulars and Directory Section -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Circulars Column -->
                 <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <h3 class="font-bold text-xs text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-newspaper text-indigo-600"></i> أحدث أخبار الإدارة التعليمية</h3>
-                    <div class="space-y-3 text-xs">
-                        <div class="p-3 bg-slate-50 rounded border border-slate-100">
-                            <span class="text-[10px] text-indigo-600 font-bold">20 أكتوبر 2026</span>
-                            <h4 class="font-bold text-slate-800 mt-0.5">مدير عام الإدارة يتابع انتظام الدراسية ومعدلات الانضباط اليومي</h4>
-                            <p class="text-slate-500 mt-1 text-[11px]">تفقد عدد من مدارس مركز كفر الدوار للاطمئنان على سير الحصص والالتزام بالكثافات...</p>
-                        </div>
-                        <div class="p-3 bg-slate-50 rounded border border-slate-100">
-                            <span class="text-[10px] text-indigo-600 font-bold">18 أكتوبر 2026</span>
-                            <h4 class="font-bold text-slate-800 mt-0.5">إطلاق البوابة الرقمية الموحدة لخدمة مدارس الإدارة</h4>
-                            <p class="text-slate-500 mt-1 text-[11px]">بدء التفعيل الإلكتروني لكافة الخدمات والتقارير الميدانية لمديري المدارس والمراحل...</p>
-                        </div>
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                        <h3 class="font-extrabold text-sm text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-red-600"></i> الكتب الدورية والتعميمات الرسمية
+                        </h3>
+                        <button onclick="openAddCircularModal()" class="edit-btn hidden bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded text-xs font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> إضافة كتاب دوري
+                        </button>
+                    </div>
+                    <div id="circularsList" class="space-y-3">
+                        <!-- Circulars rendered by JS -->
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <h3 class="font-bold text-xs text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-download text-red-600"></i> أحدث الكتب الدورية</h3>
-                    <ul class="space-y-2 text-xs">
-                        <li class="p-2 bg-slate-50 rounded border border-slate-100 flex justify-between items-center">
-                            <span>الكتاب الدوري رقم (15) لسير الامتحانات</span>
-                            <button class="text-indigo-600 font-bold"><i class="fa-solid fa-download"></i></button>
-                        </li>
-                        <li class="p-2 bg-slate-50 rounded border border-slate-100 flex justify-between items-center">
-                            <span>خطة زيارات التوجيه الفني الشهرية</span>
-                            <button class="text-indigo-600 font-bold"><i class="fa-solid fa-download"></i></button>
-                        </li>
-                    </ul>
+                <!-- Directory Summary Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-4">
+                    <h3 class="font-extrabold text-sm text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-school-flag text-amber-500"></i> دليل مدارس مركز كفر الدوار
+                    </h3>
+                    <p class="text-xs text-slate-500">تضم الإدارة 48 مدرسة مقسمة على مراحل التعليم الابتدائي، الإعدادي، الثانوي العام والفني.</p>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between p-2 bg-emerald-50 rounded border border-emerald-100 font-bold text-emerald-900">
+                            <span>المرحلة الابتدائية</span>
+                            <span>22 مدرسة</span>
+                        </div>
+                        <div class="flex justify-between p-2 bg-indigo-50 rounded border border-indigo-100 font-bold text-indigo-900">
+                            <span>المرحلة الإعدادية</span>
+                            <span>14 مدرسة</span>
+                        </div>
+                        <div class="flex justify-between p-2 bg-amber-50 rounded border border-amber-100 font-bold text-amber-900">
+                            <span>المرحلة الثانوية والفنية</span>
+                            <span>12 مدرسة</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= 2. GENERAL MANAGER DASHBOARD ================= -->
+        <!-- ========================================================================= -->
+        <!-- 2. GENERAL MANAGER DASHBOARD (لوحة قيادة مدير عام الإدارة) -->
+        <!-- ========================================================================= -->
         <div id="general-dashboard" class="tab-content space-y-6">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-3">
                 <div>
-                    <h2 class="font-bold text-sm text-indigo-900"><i class="fa-solid fa-user-shield text-indigo-600 ml-1"></i> لوحة قيادة مدير عام الإدارة (رؤية شاملة)</h2>
-                    <p class="text-[11px] text-slate-500">إحصائيات مجمعة ومؤشرات أداء كل مدارس مركز كفر الدوار.</p>
+                    <h2 class="font-black text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-user-shield text-indigo-600"></i> لوحة قيادة مدير عام الإدارة (Executive Dashboard)
+                    </h2>
+                    <p class="text-xs text-slate-500">متابعة لحظية ومؤشرات أداء مجمعة لجميع قطاعات الإدارة التعليمية بكفر الدوار.</p>
                 </div>
-                <button onclick="window.print()" class="bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-print ml-1"></i> طباعة التقرير الشامل</button>
-            </div>
-
-            <!-- Stats Row -->
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <p class="text-xs text-slate-500">إجمالي المدارس</p>
-                    <h3 class="text-xl font-extrabold text-slate-800 mt-1">48 مدرسة</h3>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <p class="text-xs text-slate-500">متوسط حضور الطلاب</p>
-                    <h3 class="text-xl font-extrabold text-emerald-600 mt-1">94.5%</h3>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <p class="text-xs text-slate-500">انضباط المعلمين</p>
-                    <h3 class="text-xl font-extrabold text-indigo-600 mt-1">97.8%</h3>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <p class="text-xs text-slate-500">البلاغات المعلقة</p>
-                    <h3 id="gmOpenIssues" class="text-xl font-extrabold text-amber-600 mt-1">2 بلاغ</h3>
-                </div>
-            </div>
-
-            <!-- Chart & Live Submissions -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-xs text-slate-800 mb-3"><i class="fa-solid fa-chart-pie text-indigo-600 ml-1"></i> توزيع المدارس والمراحل</h3>
-                    <div class="h-60 flex justify-center items-center">
-                        <canvas id="generalStagesChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-xs text-slate-800 mb-3"><i class="fa-solid fa-clipboard-list text-indigo-600 ml-1"></i> تقارير وبلاغات مديري المدارس الواردة</h3>
-                    <div id="submittedReportsList" class="space-y-2 text-xs max-h-60 overflow-y-auto">
-                        <p class="text-slate-400 text-center py-4">لا توجد تقارير جديدة مسجلة اليوم بعد.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= 3. STAGE MANAGERS DASHBOARD ================= -->
-        <div id="stage-dashboard" class="tab-content space-y-6">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
-                <div>
-                    <h2 class="font-bold text-sm text-indigo-900"><i class="fa-solid fa-layer-group text-indigo-600 ml-1"></i> لوحة متابعة مديري المراحل</h2>
-                    <p class="text-[11px] text-slate-500">اختر المرحلة لتصفية مدارس القطاع ومتابعة عجز التخصصات والتقارير.</p>
-                </div>
-                <select id="stageFilterSelect" onchange="filterStageSchools()" class="text-xs bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 font-bold">
-                    <option value="primary">المرحلة الابتدائية (22 مدرسة)</option>
-                    <option value="prep">المرحلة الإعدادية (14 مدرسة)</option>
-                    <option value="sec">المرحلة الثانوية والفنية (12 مدرسة)</option>
-                </select>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-3 bg-slate-50 font-bold text-xs text-slate-700 border-b border-slate-200">قائمة مدارس القطاع ومتابعة الانضباط</div>
-                <table class="w-full text-right text-xs">
-                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
-                        <tr>
-                            <th class="p-3">اسم المدرسة</th>
-                            <th class="p-3">نسبة حضور الطلاب</th>
-                            <th class="p-3">حضور المعلمين</th>
-                            <th class="p-3">حالة العجز</th>
-                            <th class="p-3 text-center">الإجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="stageSchoolsTableBody" class="divide-y divide-slate-100">
-                        <!-- Filled by JS -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ================= 4. SCHOOL MANAGER PORTAL ================= -->
-        <div id="school-portal" class="tab-content space-y-6">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 max-w-2xl mx-auto">
-                <div class="text-center mb-4 border-b border-slate-100 pb-3">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-lg mx-auto mb-2"><i class="fa-solid fa-school"></i></div>
-                    <h2 class="font-bold text-sm text-indigo-900">بوابة تسجيل البيانات اليومية لمدير المدرسة</h2>
-                    <p class="text-[11px] text-slate-500">قم بإدخال بيانات الحضور اليومي والبلاغات لترسل فوراً إلى مدير عام الإدارة ومدير المرحلة.</p>
-                </div>
-
-                <form id="schoolReportForm" onsubmit="submitSchoolReport(event)" class="space-y-4 text-xs">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">اختر مدرستك:</label>
-                        <select id="reportSchoolName" class="w-full border border-slate-300 rounded-lg p-2 font-semibold">
-                            <option value="مدرسة معمل القزاز الثانوية المشتركة">مدرسة معمل القزاز الثانوية المشتركة</option>
-                            <option value="مدرسة النصر الابتدائية بنين">مدرسة النصر الابتدائية بنين</option>
-                            <option value="مدرسة النهضة الإعدادية بنات">مدرسة النهضة الإعدادية بنات</option>
-                            <option value="مدرسة الثورة الابتدائية الجديدة">مدرسة الثورة الابتدائية الجديدة</option>
-                            <option value="مدرسة كفر الدوار الصناعية بنات">مدرسة كفر الدوار الصناعية بنات</option>
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block font-bold text-slate-700 mb-1">نسبة حضور الطلاب (%):</label>
-                            <input type="text" id="reportStudentAtt" placeholder="مثال: 95%" required class="w-full border border-slate-300 rounded-lg p-2">
-                        </div>
-                        <div>
-                            <label class="block font-bold text-slate-700 mb-1">نسبة حضور المعلمين (%):</label>
-                            <input type="text" id="reportTeacherAtt" placeholder="مثال: 98%" required class="w-full border border-slate-300 rounded-lg p-2">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">وجود عجز أو بلاغ طارئ (إن وجد):</label>
-                        <textarea id="reportIssue" rows="3" class="w-full border border-slate-300 rounded-lg p-2" placeholder="اكتب أي ملاحظات أو طلبات صيانة أو عجز معلمين... (اختياري)"></textarea>
-                    </div>
-
-                    <button type="submit" class="w-full bg-indigo-900 hover:bg-indigo-950 text-white font-bold py-2.5 rounded-lg transition shadow">
-                        <i class="fa-solid fa-paper-plane ml-1"></i> حفظ وإرسال التقرير للإدارة رسمياً
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow">
+                        <i class="fa-solid fa-print"></i> طباعة التقرير الشامل
                     </button>
-                </form>
+                </div>
+            </div>
+
+            <!-- KPIs Row (Editable in Edit Mode) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 relative">
+                    <p class="text-xs text-slate-500 font-bold">إجمالي مدارس المركز</p>
+                    <h3 id="kpiTotalSchools" class="text-2xl font-black text-slate-800 mt-1">48 مدرسة</h3>
+                    <button onclick="editKPI('kpiTotalSchools', 'إجمالي المدارس')" class="edit-btn hidden absolute top-3 left-3 text-amber-600 hover:text-amber-700 text-xs"><i class="fa-solid fa-pen"></i></button>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 relative">
+                    <p class="text-xs text-slate-500 font-bold">نسبة حضور الطلاب اليوم</p>
+                    <h3 id="kpiStudentAtt" class="text-2xl font-black text-emerald-600 mt-1">94.5%</h3>
+                    <button onclick="editKPI('kpiStudentAtt', 'نسبة حضور الطلاب')" class="edit-btn hidden absolute top-3 left-3 text-amber-600 hover:text-amber-700 text-xs"><i class="fa-solid fa-pen"></i></button>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 relative">
+                    <p class="text-xs text-slate-500 font-bold">نسبة انضباط المعلمين</p>
+                    <h3 id="kpiTeacherAtt" class="text-2xl font-black text-indigo-600 mt-1">97.8%</h3>
+                    <button onclick="editKPI('kpiTeacherAtt', 'انضباط المعلمين')" class="edit-btn hidden absolute top-3 left-3 text-amber-600 hover:text-amber-700 text-xs"><i class="fa-solid fa-pen"></i></button>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 relative">
+                    <p class="text-xs text-slate-500 font-bold">البلاغات المعلقة / الطارئة</p>
+                    <h3 id="kpiOpenIssues" class="text-2xl font-black text-amber-600 mt-1">2 بلاغ جاري المتابعة</h3>
+                    <button onclick="editKPI('kpiOpenIssues', 'البلاغات')" class="edit-btn hidden absolute top-3 left-3 text-amber-600 hover:text-amber-700 text-xs"><i class="fa-solid fa-pen"></i></button>
+                </div>
+            </div>
+
+            <!-- Direct Instructions Broadcasting Box -->
+            <div class="bg-indigo-950 text-white p-5 rounded-xl shadow-md space-y-3">
+                <h3 class="font-extrabold text-sm flex items-center gap-2 text-amber-400">
+                    <i class="fa-solid fa-paper-plane"></i> إرسال تعليمات وتوجيهات فورية من المدير العام لجميع المدارس والمراحل
+                </h3>
+                <div class="flex gap-2">
+                    <input type="text" id="gmDirectiveInput" placeholder="اكتب التعليمات العاجلة هنا للظهور في شريط التنبيهات العام فوراً..." class="flex-1 px-3 py-2 text-xs rounded-lg text-slate-900 font-semibold focus:outline-none">
+                    <button onclick="broadcastGMDirective()" class="bg-amber-400 hover:bg-amber-500 text-indigo-950 px-4 py-2 rounded-lg text-xs font-bold transition shrink-0">
+                        بث التعليمات الآن
+                    </button>
+                </div>
+            </div>
+
+            <!-- Charts and Live Submissions List -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Attendance Chart -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-extrabold text-sm text-slate-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-indigo-600"></i> نسبة الحضور والانضباط الأسبوعي
+                    </h3>
+                    <div class="h-60">
+                        <canvas id="gmAttendanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Live School Reports Inbox -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                    <h3 class="font-extrabold text-sm text-slate-800 mb-3 flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-inbox text-indigo-600"></i> التقارير الميدانية الواردة من المدارس</span>
+                        <span class="text-[11px] text-slate-400">تحديث فوري</span>
+                    </h3>
+                    <div id="gmReportsInbox" class="space-y-3 flex-1 overflow-y-auto max-h-60 text-xs">
+                        <!-- Incoming reports loaded by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- 3. STAGE MANAGERS DASHBOARD (لوحة مديري المراحل) -->
+        <!-- ========================================================================= -->
+        <div id="stage-dashboard" class="tab-content space-y-6">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-3">
+                <div>
+                    <h2 class="font-black text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-indigo-600"></i> لوحة متابعة مديري المراحل التعليمية
+                    </h2>
+                    <p class="text-xs text-slate-500">متابعة دقيقة لقطاعات المدارس، مع إمكانية التعديل السريع لنسب الانضباط والعجز مباشرة.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-bold text-slate-600">تحديد المرحلة:</label>
+                    <select id="stageSelect" onchange="renderStageSchools()" class="bg-slate-100 font-bold border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="primary">المرحلة الابتدائية (22 مدرسة)</option>
+                        <option value="prep">المرحلة الإعدادية (14 مدرسة)</option>
+                        <option value="sec">المرحلة الثانوية والفنية (12 مدرسة)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Stage Schools Editable Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-extrabold text-xs text-slate-800" id="stageTableTitle">مدارس القطاع ومتابعة حالة الانضباط والعجز</h3>
+                    <button onclick="openAddSchoolModal()" class="edit-btn hidden bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-bold transition flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> إضافة مدرسة للقطاع
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">اسم المدرسة</th>
+                                <th class="p-3">حضور الطلاب</th>
+                                <th class="p-3">حضور المعلمين</th>
+                                <th class="p-3">حالة العجز في المواد</th>
+                                <th class="p-3">ملاحظات التفتيش والمتابعة</th>
+                                <th class="p-3 text-center">الإجراءات والتعديل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stageSchoolsTableBody" class="divide-y divide-slate-100">
+                            <!-- Rows rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recommendation Submission Box -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-3">
+                <h3 class="font-extrabold text-xs text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-indigo-600"></i> رفع توصية أو تقرير قطاع مباشر لمدير عام الإدارة
+                </h3>
+                <textarea id="stageRecommendationText" rows="3" class="w-full text-xs border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="اكتب التوصيات الخاصة بسد العجز أو التنقلات لمدرستك لرفعها مباشرة للوحة مدير الإدارة..."></textarea>
+                <button onclick="submitStageRecommendation()" class="bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow">
+                    رفع التوصية لمدير عام الإدارة
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- 4. SCHOOL MANAGERS PORTAL (بوابة مديري المدارس) -->
+        <!-- ========================================================================= -->
+        <div id="school-portal" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Submission Form Column -->
+                <div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h2 class="font-extrabold text-sm text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-indigo-600"></i> تسجيل التقرير اليومي للمدرسة
+                        </h2>
+                        <p class="text-[11px] text-slate-500 mt-0.5">إدخال نسب الحضور والبلاغات العاجلة وترحيلها للإدارة.</p>
+                    </div>
+
+                    <form id="schoolReportForm" onsubmit="handleSchoolReportSubmit(event)" class="space-y-3 text-xs">
+                        <input type="hidden" id="editingReportId" value="">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">اسم المدرسة:</label>
+                            <select id="formSchoolName" required class="w-full border border-slate-300 rounded-lg p-2 font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">حضور الطلاب (%):</label>
+                                <input type="number" min="0" max="100" id="formStudentAtt" placeholder="مثال: 95" required class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">حضور المعلمين (%):</label>
+                                <input type="number" min="0" max="100" id="formTeacherAtt" placeholder="مثال: 98" required class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">بلاغ طارئ / عجز معلمين (إن وجد):</label>
+                            <textarea id="formIssueText" rows="3" class="w-full border border-slate-300 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="اكتب الملاحظات الطارئة هنا..."></textarea>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button type="submit" id="submitReportBtn" class="flex-1 bg-indigo-900 hover:bg-indigo-950 text-white font-bold py-2.5 rounded-lg transition shadow">
+                                إرسال التقرير للإدارة
+                            </button>
+                            <button type="button" id="cancelEditReportBtn" onclick="resetSchoolForm()" class="hidden bg-slate-300 hover:bg-slate-400 text-slate-800 font-bold px-3 py-2.5 rounded-lg transition">
+                                إلغاء
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Submissions Management Table Column -->
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <h3 class="font-extrabold text-sm text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> سجل التقارير والبلاغات السابقة للمدارس
+                        </h3>
+                        <span class="text-[11px] text-slate-500">يمكنك تعديل أي تقرير أُرسل سابقاً</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-2.5">المدرسة</th>
+                                    <th class="p-2.5">طلاب</th>
+                                    <th class="p-2.5">معلمين</th>
+                                    <th class="p-2.5">البلاغ / الملاحظة</th>
+                                    <th class="p-2.5">التوقيت</th>
+                                    <th class="p-2.5 text-center">التعديل والإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schoolReportsTableBody" class="divide-y divide-slate-100">
+                                <!-- Reports loaded by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
     </main>
 
+    <!-- Modals for Dynamic Editing -->
+
+    <!-- Modal: Add / Edit News -->
+    <div id="newsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl">
+            <h3 class="font-extrabold text-sm text-slate-800 border-b border-slate-100 pb-2" id="newsModalTitle">إضافة خبر جديد</h3>
+            <input type="hidden" id="modalNewsId">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">عنوان الخبر:</label>
+                <input type="text" id="modalNewsTitle" class="w-full text-xs border border-slate-300 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">تفاصيل الخبر:</label>
+                <textarea id="modalNewsContent" rows="3" class="w-full text-xs border border-slate-300 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 text-xs font-bold">
+                <button onclick="closeModal('newsModal')" class="bg-slate-200 px-3 py-1.5 rounded-lg text-slate-700">إلغاء</button>
+                <button onclick="saveNewsModal()" class="bg-indigo-900 text-white px-4 py-1.5 rounded-lg">حفظ الخبر</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Circular -->
+    <div id="circularModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl">
+            <h3 class="font-extrabold text-sm text-slate-800 border-b border-slate-100 pb-2">إضافة كتاب دوري جديد</h3>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">عنوان الكتاب الدوري / القرار:</label>
+                <input type="text" id="modalCircularTitle" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">الرقم أو التاريخ:</label>
+                <input type="text" id="modalCircularNum" placeholder="مثال: قرار رقم (16) لسنة 2026" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+            </div>
+            <div class="flex justify-end gap-2 text-xs font-bold">
+                <button onclick="closeModal('circularModal')" class="bg-slate-200 px-3 py-1.5 rounded-lg text-slate-700">إلغاء</button>
+                <button onclick="saveCircularModal()" class="bg-indigo-900 text-white px-4 py-1.5 rounded-lg">حفظ والكتاب الدوري</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add / Edit Stage School -->
+    <div id="schoolModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl">
+            <h3 class="font-extrabold text-sm text-slate-800 border-b border-slate-100 pb-2" id="schoolModalTitle">بيانات المدرسة</h3>
+            <input type="hidden" id="modalSchoolId">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">اسم المدرسة:</label>
+                <input type="text" id="modalSchoolName" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">حضور الطلاب (%):</label>
+                    <input type="text" id="modalSchoolStudentAtt" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">حضور المعلمين (%):</label>
+                    <input type="text" id="modalSchoolTeacherAtt" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">حالة العجز:</label>
+                <input type="text" id="modalSchoolShortage" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">ملاحظات والتفتيش:</label>
+                <input type="text" id="modalSchoolNotes" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+            </div>
+            <div class="flex justify-end gap-2 text-xs font-bold">
+                <button onclick="closeModal('schoolModal')" class="bg-slate-200 px-3 py-1.5 rounded-lg text-slate-700">إلغاء</button>
+                <button onclick="saveSchoolModal()" class="bg-indigo-900 text-white px-4 py-1.5 rounded-lg">حفظ البيانات</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 text-xs py-4 text-center border-t border-slate-800 mt-8">
-        <p>إدارة مركز كفر الدوار التعليمية - محافظة البحيرة © 2026 | تصميم وتنفيذ: <b class="text-amber-400">مكتب القزاز للبرمجيات</b></p>
+    <footer class="bg-slate-900 text-slate-400 text-xs py-5 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-right">
+            <div>
+                <p class="font-extrabold text-white">إدارة مركز كفر الدوار التعليمية - مديرية التربية والتعليم بالبحيرة</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">جميع الحقوق محفوظة © المنظومة الرقمية الشاملة 2026</p>
+            </div>
+            <div class="text-[11px]">
+                تطوير وتنفيذ: <b class="text-amber-400">مكتب القزاز للبرمجيات والحلول الرقمية</b>
+            </div>
+        </div>
     </footer>
 
-    <!-- JavaScript Logic & Storage -->
+    <!-- JavaScript Application Core Logic -->
     <script>
-        // Tab Switching Logic
+        // System Initial Default Mock Data
+        const defaultData = {
+            editMode: false,
+            notice: "تنبيه هام من مدير عام الإدارة: التنبيه على جميع المدارس بضرورة إنهاء تسجيل بيانات الانضباط اليومي قبل الساعة 10 صباحاً.",
+            kpis: {
+                kpiTotalSchools: "48 مدرسة",
+                kpiStudentAtt: "94.5%",
+                kpiTeacherAtt: "97.8%",
+                kpiOpenIssues: "2 بلاغ جاري المتابعة"
+            },
+            news: [
+                { id: 1, title: "مدير عام الإدارة يتفقد مدارس قطاع كفر الدوار للاطمئنان على الانضباط", content: "عقد السيد مدير عام الإدارة جولة ميدانية موسعة شملت المدارس الابتدائية والإعدادية لمتابعة سير العملية التعليمية وسد العجز.", date: "20 أكتوبر 2026" },
+                { id: 2, title: "تفعيل المنظومة الرقمية الموحدة لتلقي تقارير مديري المدارس", content: "بدأت إدارة مركز كفر الدوار تفعيل نظام التقارير الإلكترونية اللحظية للتفاعل السريع مع احتياجات المدارس وملاحظات الموجهين.", date: "18 أكتوبر 2026" }
+            ],
+            circulars: [
+                { id: 1, title: "الكتاب الدوري رقم (15) بشأن ترتيبات سير الامتحانات والانضباط", num: "قرار وزارى - أكتوبر 2026" },
+                { id: 2, title: "تعليمات الأمن والسلامة وإجراءات السلامة المهنية بالمدارس", num: "تعميم رقم 8" }
+            ],
+            schools: [
+                { id: 101, name: "مدرسة معمل القزاز الثانوية المشتركة", stage: "sec", studentAtt: "96%", teacherAtt: "99%", shortage: "لا يوجد", notes: "انضباط ممتاز" },
+                { id: 102, name: "مدرسة النصر الابتدائية بنين", stage: "primary", studentAtt: "93%", teacherAtt: "96%", shortage: "لا يوجد", notes: "حالة جيدة" },
+                { id: 103, name: "مدرسة النهضة الإعدادية بنات", stage: "prep", studentAtt: "89%", teacherAtt: "95%", shortage: "عجز علوم (1)", notes: "توصية بالتنديب" },
+                { id: 104, name: "مدرسة الثورة الابتدائية الجديدة", stage: "primary", studentAtt: "95%", teacherAtt: "98%", shortage: "عجز رياضيات (1)", notes: "متابعة التوجيه" },
+                { id: 105, name: "مدرسة كفر الدوار الصناعية بنات", stage: "sec", studentAtt: "88%", teacherAtt: "93%", shortage: "عجز معلم عملي (2)", notes: "جاري المعالجة" }
+            ],
+            reports: [
+                { id: 501, schoolName: "مدرسة معمل القزاز الثانوية المشتركة", studentAtt: "96", teacherAtt: "99", issue: "لا يوجد معوقات وسير الدراسة منتظم تماماً.", time: "09:15 ص" },
+                { id: 502, schoolName: "مدرسة النهضة الإعدادية بنات", studentAtt: "89", teacherAtt: "95", issue: "عجز طارئ في معلم مادة العلوم للera الإعدادية.", time: "09:40 ص" }
+            ]
+        };
+
+        // App State
+        let appState = {};
+
+        // Load & Initialize State
+        function initSystem() {
+            const stored = localStorage.getItem('kfr_edu_system_state');
+            if (stored) {
+                try {
+                    appState = JSON.parse(stored);
+                } catch(e) {
+                    appState = JSON.parse(JSON.stringify(defaultData));
+                }
+            } else {
+                appState = JSON.parse(JSON.stringify(defaultData));
+            }
+            saveState();
+            applyStateUI();
+            initChart();
+        }
+
+        function saveState() {
+            localStorage.setItem('kfr_edu_system_state', JSON.stringify(appState));
+        }
+
+        function resetSystemData() {
+            if (confirm("هل أنت تأكد من إعادة ضبط كل بيانات المنظومة واستعادة الإعدادات الافتراضية؟")) {
+                localStorage.removeItem('kfr_edu_system_state');
+                appState = JSON.parse(JSON.stringify(defaultData));
+                saveState();
+                applyStateUI();
+                alert("تمت إعادة ضبط البيانات بنجاح!");
+            }
+        }
+
+        // Apply UI updates from State
+        function applyStateUI() {
+            // Edit Mode Toggle Switch UI
+            const toggle = document.getElementById('editModeToggle');
+            const label = document.getElementById('editModeLabel');
+            toggle.checked = appState.editMode;
+            label.innerText = appState.editMode ? "وضع التعديل نشط" : "وضع التصفح";
+            label.className = appState.editMode ? "ml-2 font-bold text-[11px] text-amber-400" : "ml-2 font-bold text-[11px]";
+
+            // Show/Hide Edit Buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                if (appState.editMode) btn.classList.remove('hidden');
+                else btn.classList.add('hidden');
+            });
+
+            // Global Notice
+            document.getElementById('noticeMarquee').innerText = appState.notice;
+
+            // KPIs
+            document.getElementById('kpiTotalSchools').innerText = appState.kpis.kpiTotalSchools;
+            document.getElementById('kpiStudentAtt').innerText = appState.kpis.kpiStudentAtt;
+            document.getElementById('kpiTeacherAtt').innerText = appState.kpis.kpiTeacherAtt;
+            document.getElementById('kpiOpenIssues').innerText = appState.kpis.kpiOpenIssues;
+
+            // Render Modules
+            renderNews();
+            renderCirculars();
+            renderStageSchools();
+            renderSchoolDropdown();
+            renderSchoolReports();
+            renderGMInbox();
+        }
+
+        // Toggle Edit Mode
+        function toggleEditMode() {
+            appState.editMode = document.getElementById('editModeToggle').checked;
+            saveState();
+            applyStateUI();
+        }
+
+        // Tab Switcher
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('bg-indigo-800', 'text-amber-300'));
-            
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.add('bg-indigo-800', 'text-amber-300');
-
-            if(tabId === 'stage-dashboard') {
-                filterStageSchools();
-            }
-        }
-
-        // Mock Schools Data for Stages
-        const schoolsDirectory = [
-            { name: "مدرسة النصر الابتدائية بنين", stage: "primary", students: "93%", teachers: "96%", shortage: "لا يوجد" },
-            { name: "مدرسة الثورة الابتدائية الجديدة", stage: "primary", students: "95%", teachers: "98%", shortage: "عجز رياضيات (1)" },
-            { name: "مدرسة الجمهورية الابتدائية", stage: "primary", students: "91%", teachers: "94%", shortage: "لا يوجد" },
-            { name: "مدرسة النهضة الإعدادية بنات", stage: "prep", students: "89%", teachers: "95%", shortage: "عجز علوم (1)" },
-            { name: "مدرسة المستقبل الإعدادية بنين", stage: "prep", students: "94%", teachers: "97%", shortage: "لا يوجد" },
-            { name: "مدرسة معمل القزاز الثانوية المشتركة", stage: "sec", students: "96%", teachers: "99%", shortage: "لا يوجد" },
-            { name: "مدرسة كفر الدوار الصناعية بنات", stage: "sec", students: "88%", teachers: "93%", shortage: "عجز عملي (2)" }
-        ];
-
-        function filterStageSchools() {
-            const stage = document.getElementById('stageFilterSelect').value;
-            const tbody = document.getElementById('stageSchoolsTableBody');
-            tbody.innerHTML = '';
-
-            const filtered = schoolsDirectory.filter(s => s.stage === stage);
-            filtered.forEach(school => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-semibold text-slate-800">${school.name}</td>
-                        <td class="p-3 text-emerald-600 font-bold">${school.students}</td>
-                        <td class="p-3 text-indigo-600 font-bold">${school.teachers}</td>
-                        <td class="p-3 text-amber-600 font-semibold">${school.shortage}</td>
-                        <td class="p-3 text-center"><button class="bg-slate-100 px-2 py-1 rounded text-[10px] font-bold">متابعة</button></td>
-                    </tr>
-                `;
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.className = "px-3 py-2 rounded-lg hover:bg-indigo-800 transition flex items-center gap-1";
             });
+
+            document.getElementById(tabId).classList.add('active');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.className = "px-3 py-2 rounded-lg bg-amber-400 text-indigo-950 shadow transition flex items-center gap-1 font-bold";
         }
 
-        // Handling School Reports Submission & LocalStorage Persistence
-        function submitSchoolReport(e) {
-            e.preventDefault();
-            const schoolName = document.getElementById('reportSchoolName').value;
-            const studentAtt = document.getElementById('reportStudentAtt').value;
-            const teacherAtt = document.getElementById('reportTeacherAtt').value;
-            const issue = document.getElementById('reportIssue').value || 'انتظام سير الدراسة بدون معوقات';
-
-            const newReport = {
-                schoolName,
-                studentAtt,
-                teacherAtt,
-                issue,
-                time: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})
-            };
-
-            let reports = JSON.parse(localStorage.getItem('kfr_school_reports') || '[]');
-            reports.unshift(newReport);
-            localStorage.setItem('kfr_school_reports', JSON.stringify(reports));
-
-            alert('تم حفظ وإرسال التقرير بنجاح إلى لوحة قيادة مدير عام الإدارة ومدير المرحلة!');
-            document.getElementById('schoolReportForm').reset();
-            loadReportsToManager();
-        }
-
-        function loadReportsToManager() {
-            const reports = JSON.parse(localStorage.getItem('kfr_school_reports') || '[]');
-            const container = document.getElementById('submittedReportsList');
-            
-            if (reports.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-center py-4">لا توجد تقارير جديدة مسجلة اليوم بعد.</p>`;
-                return;
+        // Edit Notice
+        function editGlobalNotice() {
+            const newNotice = prompt("أدخل نص التنبيه العام الجديد:", appState.notice);
+            if (newNotice !== null && newNotice.trim() !== "") {
+                appState.notice = newNotice.trim();
+                saveState();
+                applyStateUI();
             }
+        }
 
-            container.innerHTML = '';
-            reports.forEach(rep => {
-                container.innerHTML += `
-                    <div class="p-3 bg-slate-50 border-r-4 border-indigo-600 rounded text-xs space-y-1">
-                        <div class="flex justify-between font-bold text-slate-800">
-                            <span><i class="fa-solid fa-school ml-1"></i> ${rep.schoolName}</span>
-                            <span class="text-[10px] text-slate-400">${rep.time}</span>
+        // Edit KPI
+        function editKPI(key, name) {
+            const val = prompt(`تعديل مؤشر (${name}):`, appState.kpis[key]);
+            if (val !== null && val.trim() !== "") {
+                appState.kpis[key] = val.trim();
+                saveState();
+                applyStateUI();
+            }
+        }
+
+        // Directives Broadcast from GM
+        function broadcastGMDirective() {
+            const input = document.getElementById('gmDirectiveInput');
+            if (input.value.trim() !== "") {
+                appState.notice = "توجيه عام عاجل: " + input.value.trim();
+                input.value = "";
+                saveState();
+                applyStateUI();
+                alert("تم بث التوجيهات فوراً لجميع المستخدمين في البوابة!");
+            }
+        }
+
+        // NEWS MODULE
+        function renderNews() {
+            const grid = document.getElementById('newsGrid');
+            grid.innerHTML = '';
+            appState.news.forEach(item => {
+                grid.innerHTML += `
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3 relative">
+                        <div>
+                            <span class="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded">${item.date}</span>
+                            <h4 class="font-bold text-slate-800 text-xs sm:text-sm mt-2">${item.title}</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">${item.content}</p>
                         </div>
-                        <p class="text-slate-600">حضور الطلاب: <b>${rep.studentAtt}</b> | المعلمين: <b>${rep.teacherAtt}</b></p>
-                        <p class="text-amber-700 bg-amber-50 p-1 rounded">ملاحظة/بلاغ: ${rep.issue}</p>
+                        ${appState.editMode ? `
+                            <div class="flex gap-2 pt-2 border-t border-slate-100 text-xs font-bold">
+                                <button onclick="editNews(${item.id})" class="text-amber-600 hover:underline"><i class="fa-solid fa-pen"></i> تعديل</button>
+                                <button onclick="deleteNews(${item.id})" class="text-red-600 hover:underline"><i class="fa-solid fa-trash"></i> حذف</button>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             });
         }
 
-        // Initialize Charts
-        window.onload = function() {
-            loadReportsToManager();
-            const ctx = document.getElementById('generalStagesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['ابتدائي (22)', 'إعدادي (14)', 'ثانوي وفني (12)'],
-                    datasets: [{
-                        data: [22, 14, 12],
-                        backgroundColor: ['#10b981', '#6366f1', '#f59e0b']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
+        function openAddNewsModal() {
+            document.getElementById('modalNewsId').value = '';
+            document.getElementById('modalNewsTitle').value = '';
+            document.getElementById('modalNewsContent').value = '';
+            document.getElementById('newsModalTitle').innerText = 'إضافة خبر جديد';
+            document.getElementById('newsModal').classList.remove('hidden');
+        }
+
+        function editNews(id) {
+            const item = appState.news.find(n => n.id === id);
+            if (item) {
+                document.getElementById('modalNewsId').value = item.id;
+                document.getElementById('modalNewsTitle').value = item.title;
+                document.getElementById('modalNewsContent').value = item.content;
+                document.getElementById('newsModalTitle').innerText = 'تعديل الخبر';
+                document.getElementById('newsModal').classList.remove('hidden');
+            }
+        }
+
+        function saveNewsModal() {
+            const id = document.getElementById('modalNewsId').value;
+            const title = document.getElementById('modalNewsTitle').value.trim();
+            const content = document.getElementById('modalNewsContent').value.trim();
+
+            if (!title || !content) {
+                alert("يرجى ملء جميع الحقول المطلوبة!");
+                return;
+            }
+
+            if (id) {
+                const item = appState.news.find(n => n.id == id);
+                if (item) {
+                    item.title = title;
+                    item.content = content;
+                }
+            } else {
+                appState.news.unshift({
+                    id: Date.now(),
+                    title,
+                    content,
+                    date: "اليوم"
+                });
+            }
+            saveState();
+            applyStateUI();
+            closeModal('newsModal');
+        }
+
+        function deleteNews(id) {
+            if (confirm("هل تريد حذف هذا الخبر؟")) {
+                appState.news = appState.news.filter(n => n.id !== id);
+                saveState();
+                applyStateUI();
+            }
+        }
+
+        // CIRCULARS MODULE
+        function renderCirculars() {
+            const list = document.getElementById('circularsList');
+            list.innerHTML = '';
+            appState.circulars.forEach(c => {
+                list.innerHTML += `
+                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100 hover:bg-slate-100 transition text-xs">
+                        <div>
+                            <h4 class="font-bold text-slate-800">${c.title}</h4>
+                            <span class="text-[10px] text-slate-400">${c.num}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="alert('جاري تحميل الملف...')" class="text-indigo-600 font-bold flex items-center gap-1 hover:underline"><i class="fa-solid fa-download"></i> تحميل</button>
+                            ${appState.editMode ? `<button onclick="deleteCircular(${c.id})" class="text-red-600 hover:text-red-700 font-bold ml-2"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                `;
             });
+        }
+
+        function openAddCircularModal() {
+            document.getElementById('modalCircularTitle').value = '';
+            document.getElementById('modalCircularNum').value = '';
+            document.getElementById('circularModal').classList.remove('hidden');
+        }
+
+        function saveCircularModal() {
+            const title = document.getElementById('modalCircularTitle').value.trim();
+            const num = document.getElementById('modalCircularNum').value.trim();
+
+            if (!title) {
+                alert("يرجى إدخال عنوان الكتاب الدوري!");
+                return;
+            }
+
+            appState.circulars.unshift({
+                id: Date.now(),
+                title,
+                num: num || "تعميم رسمي"
+            });
+            saveState();
+            applyStateUI();
+            closeModal('circularModal');
+        }
+
+        function deleteCircular(id) {
+            if (confirm("حذف هذا الكتاب الدوري؟")) {
+                appState.circulars = appState.circulars.filter(c => c.id !== id);
+                saveState();
+                applyStateUI();
+            }
+        }
+
+        // STAGE SCHOOLS MODULE
+        function renderStageSchools() {
+            const stage = document.getElementById('stageSelect').value;
+            const tbody = document.getElementById('stageSchoolsTableBody');
+            tbody.innerHTML = '';
+
+            const filtered = appState.schools.filter(s => s.stage === stage);
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">لا توجد مدارس مسجلة لهذا القطاع حالياً.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(school => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 font-bold text-slate-800">${school.name}</td>
+                        <td class="p-3 text-emerald-600 font-bold">${school.studentAtt}</td>
+                        <td class="p-3 text-indigo-600 font-bold">${school.teacherAtt}</td>
+                        <td class="p-3 font-semibold ${school.shortage !== 'لا يوجد' ? 'text-amber-600' : 'text-slate-400'}">${school.shortage}</td>
+                        <td class="p-3 text-slate-600">${school.notes}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="editSchool(${school.id})" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold px-2 py-1 rounded text-[10px] transition">
+                                <i class="fa-solid fa-pen"></i> تعديل
+                            </button>
+                            ${appState.editMode ? `
+                                <button onclick="deleteSchool(${school.id})" class="bg-red-50 hover:bg-red-100 text-red-700 font-bold px-2 py-1 rounded text-[10px] transition ml-1">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openAddSchoolModal() {
+            document.getElementById('modalSchoolId').value = '';
+            document.getElementById('modalSchoolName').value = '';
+            document.getElementById('modalSchoolStudentAtt').value = '95%';
+            document.getElementById('modalSchoolTeacherAtt').value = '98%';
+            document.getElementById('modalSchoolShortage').value = 'لا يوجد';
+            document.getElementById('modalSchoolNotes').value = 'مستقرة';
+            document.getElementById('schoolModalTitle').innerText = 'إضافة مدرسة جديدة';
+            document.getElementById('schoolModal').classList.remove('hidden');
+        }
+
+        function editSchool(id) {
+            const s = appState.schools.find(item => item.id === id);
+            if (s) {
+                document.getElementById('modalSchoolId').value = s.id;
+                document.getElementById('modalSchoolName').value = s.name;
+                document.getElementById('modalSchoolStudentAtt').value = s.studentAtt;
+                document.getElementById('modalSchoolTeacherAtt').value = s.teacherAtt;
+                document.getElementById('modalSchoolShortage').value = s.shortage;
+                document.getElementById('modalSchoolNotes').value = s.notes;
+                document.getElementById('schoolModalTitle').innerText = 'تعديل بيانات المدرسة';
+                document.getElementById('schoolModal').classList.remove('hidden');
+            }
+        }
+
+        function saveSchoolModal() {
+            const id = document.getElementById('modalSchoolId').value;
+            const name = document.getElementById('modalSchoolName').value.trim();
+            const studentAtt = document.getElementById('modalSchoolStudentAtt').value.trim();
+            const teacherAtt = document.getElementById('modalSchoolTeacherAtt').value.trim();
+            const shortage = document.getElementById('modalSchoolShortage').value.trim();
+            const notes = document.getElementById('modalSchoolNotes').value.trim();
+            const stage = document.getElementById('stageSelect').value;
+
+            if (!name) {
+                alert("يرجى كتابة اسم المدرسة!");
+                return;
+            }
+
+            if (id) {
+                const s = appState.schools.find(item => item.id == id);
+                if (s) {
+                    s.name = name;
+                    s.studentAtt = studentAtt;
+                    s.teacherAtt = teacherAtt;
+                    s.shortage = shortage;
+                    s.notes = notes;
+                }
+            } else {
+                appState.schools.push({
+                    id: Date.now(),
+                    name,
+                    stage,
+                    studentAtt,
+                    teacherAtt,
+                    shortage: shortage || "لا يوجد",
+                    notes: notes || "مستقرة"
+                });
+            }
+            saveState();
+            applyStateUI();
+            closeModal('schoolModal');
+        }
+
+        function deleteSchool(id) {
+            if (confirm("حذف هذه المدرسة من القائمة؟")) {
+                appState.schools = appState.schools.filter(s => s.id !== id);
+                saveState();
+                applyStateUI();
+            }
+        }
+
+        function submitStageRecommendation() {
+            const text = document.getElementById('stageRecommendationText').value.trim();
+            if (!text) {
+                alert("يرجى كتابة نص التوصية أولاً!");
+                return;
+            }
+            appState.reports.unshift({
+                id: Date.now(),
+                schoolName: "توصية مدير المرحلة (" + document.getElementById('stageSelect').selectedOptions[0].text + ")",
+                studentAtt: "100%",
+                teacherAtt: "100%",
+                issue: text,
+                time: "الآن"
+            });
+            document.getElementById('stageRecommendationText').value = '';
+            saveState();
+            applyStateUI();
+            alert("تم إرسال التوصية فوراً إلى لوحة مدير عام الإدارة!");
+        }
+
+        // SCHOOL REPORTS MODULE
+        function renderSchoolDropdown() {
+            const select = document.getElementById('formSchoolName');
+            select.innerHTML = '';
+            appState.schools.forEach(s => {
+                select.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+            });
+        }
+
+        function handleSchoolReportSubmit(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editingReportId').value;
+            const schoolName = document.getElementById('formSchoolName').value;
+            const studentAtt = document.getElementById('formStudentAtt').value + "%";
+            const teacherAtt = document.getElementById('formTeacherAtt').value + "%";
+            const issue = document.getElementById('formIssueText').value.trim() || "انتظام كامل وسير العمل بشكل طبيعي.";
+
+            if (editId) {
+                const rep = appState.reports.find(r => r.id == editId);
+                if (rep) {
+                    rep.schoolName = schoolName;
+                    rep.studentAtt = studentAtt;
+                    rep.teacherAtt = teacherAtt;
+                    rep.issue = issue;
+                }
+            } else {
+                appState.reports.unshift({
+                    id: Date.now(),
+                    schoolName,
+                    studentAtt,
+                    teacherAtt,
+                    issue,
+                    time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+                });
+            }
+
+            resetSchoolForm();
+            saveState();
+            applyStateUI();
+            alert("تم حفظ وإرسال التقرير بنجاح للإدارة!");
+        }
+
+        function renderSchoolReports() {
+            const tbody = document.getElementById('schoolReportsTableBody');
+            tbody.innerHTML = '';
+
+            if (appState.reports.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">لا توجد تقارير سابقة مسجلة اليوم.</td></tr>`;
+                return;
+            }
+
+            appState.reports.forEach(rep => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-2.5 font-bold text-slate-800">${rep.schoolName}</td>
+                        <td class="p-2.5 text-emerald-600 font-bold">${rep.studentAtt}</td>
+                        <td class="p-2.5 text-indigo-600 font-bold">${rep.teacherAtt}</td>
+                        <td class="p-2.5 text-slate-600">${rep.issue}</td>
+                        <td class="p-2.5 text-slate-400 text-[10px]">${rep.time}</td>
+                        <td class="p-2.5 text-center">
+                            <button onclick="editSchoolReport(${rep.id})" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded text-[10px] transition">
+                                <i class="fa-solid fa-pen"></i> تعديل
+                            </button>
+                            <button onclick="deleteSchoolReport(${rep.id})" class="bg-red-50 hover:bg-red-100 text-red-700 font-bold px-2 py-1 rounded text-[10px] transition ml-1">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function editSchoolReport(id) {
+            const rep = appState.reports.find(r => r.id === id);
+            if (rep) {
+                document.getElementById('editingReportId').value = rep.id;
+                document.getElementById('formSchoolName').value = rep.schoolName;
+                document.getElementById('formStudentAtt').value = parseInt(rep.studentAtt) || 90;
+                document.getElementById('formTeacherAtt').value = parseInt(rep.teacherAtt) || 95;
+                document.getElementById('formIssueText').value = rep.issue;
+
+                document.getElementById('submitReportBtn').innerText = "تحديث وتعديل التقرير";
+                document.getElementById('cancelEditReportBtn').classList.remove('hidden');
+            }
+        }
+
+        function resetSchoolForm() {
+            document.getElementById('editingReportId').value = '';
+            document.getElementById('schoolReportForm').reset();
+            document.getElementById('submitReportBtn').innerText = "إرسال التقرير للإدارة";
+            document.getElementById('cancelEditReportBtn').classList.add('hidden');
+        }
+
+        function deleteSchoolReport(id) {
+            if (confirm("حذف هذا التقرير من السجل؟")) {
+                appState.reports = appState.reports.filter(r => r.id !== id);
+                saveState();
+                applyStateUI();
+            }
+        }
+
+        // GM REPORTS INBOX
+        function renderGMInbox() {
+            const inbox = document.getElementById('gmReportsInbox');
+            inbox.innerHTML = '';
+
+            if (appState.reports.length === 0) {
+                inbox.innerHTML = `<p class="text-slate-400 text-center py-4">لا توجد بلاغات أو تقارير ميدانية واردة اليوم بعد.</p>`;
+                return;
+            }
+
+            appState.reports.forEach(rep => {
+                inbox.innerHTML += `
+                    <div class="p-3 bg-slate-50 border-r-4 border-indigo-600 rounded-lg space-y-1">
+                        <div class="flex justify-between font-bold text-slate-800">
+                            <span><i class="fa-solid fa-school ml-1 text-indigo-600"></i> ${rep.schoolName}</span>
+                            <span class="text-[10px] text-slate-400">${rep.time}</span>
+                        </div>
+                        <p class="text-slate-600">حضور الطلاب: <b class="text-emerald-600">${rep.studentAtt}</b> | المعلمين: <b class="text-indigo-600">${rep.teacherAtt}</b></p>
+                        <p class="text-amber-800 bg-amber-50 p-1.5 rounded font-semibold text-[11px]">${rep.issue}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Modal Controls
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Chart Initialization
+        function initChart() {
+            const ctx = document.getElementById('gmAttendanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
+                    datasets: [
+                        { label: 'انضباط الطلاب (%)', data: [93, 94, 92, 95, 94.5], borderColor: '#10b981', tension: 0.3, fill: false },
+                        { label: 'انضباط المعلمين (%)', data: [97, 98, 96, 98, 97.8], borderColor: '#4338ca', tension: 0.3, fill: false }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        // Initialize App on Page Load
+        window.onload = function() {
+            initSystem();
         };
     </script>
 </body>
 </html>
+```
+
+---
+
+### ملخص الإمكانيات المضافة:
+- **نظام الحفظ اللحظي والتعديل المتكامل:** كل تغيير على الأخبار، المدارس، التقارير اليومية، التنبيهات، والمؤشرات يُحفظ فوراً في `LocalStorage`.
+- **زر إعادة ضبط المنظومة:** ميزة استعادة البيانات الأولية بنقرة واحدة في حال الرغبة في البدء من جديد.
+- **التوافق التام والمرونة:** يعمل بسلاسة على الهواتف والشاشات المختلفة كـ Single Web Application قابل للاستضافة عبر GitHub Pages أو Google Apps Script.
